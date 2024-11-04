@@ -1,0 +1,100 @@
+package main
+
+import (
+	"fmt"
+
+	"mnc/mnc"
+)
+
+
+func main() {
+    // Create a Rooms manager with a maximum of 3 rooms
+    roomsManager := mnc.NewRooms(3)
+
+    // Create an initial room with a capacity of 2
+    roomId, _ := roomsManager.CreateRoom("Chat Room", 3)
+
+    // Create members
+    member1 := &mnc.Member{Name: "Alice", Entity: newMockEntity()}
+    member2 := &mnc.Member{Name: "Bob", Entity: newMockEntity()}
+    member3 := &mnc.Member{Name: "Alice", Entity: newMockEntity()} // Duplicate name
+    member4 := &mnc.Member{Name: "Mika", Entity: newMockEntity()} // fill the room
+    member5 := &mnc.Member{Name: "Laura", Entity: newMockEntity()} // room full => will have to join another room
+    member6 := &mnc.Member{Name: "Atono", Entity: newMockEntity()} // room 0 full, join the empty room 1
+
+	room := roomsManager.Rooms[roomId]
+	fmt.Println("ONE: ", room)
+    // Try to join members to the room
+    if joinedRoom, status := roomsManager.Join(member1, roomId); status == mnc.SUCCESS {
+        fmt.Printf("Alice joined room %d.\n", joinedRoom)
+    }
+
+	fmt.Println("TWO: ", room)
+    if joinedRoom, status := roomsManager.Join(member2, roomId); status == mnc.SUCCESS {
+        fmt.Printf("Bob joined room %d.\n", joinedRoom)
+    }
+
+	fmt.Println("THREE: ", room)
+	_, status := roomsManager.Join(member3, roomId);
+    if  status == mnc.EXISTS {
+        fmt.Println("Alice (duplicate) could not join the room: name already taken.")
+    }
+	fmt.Println("THREE: ", room)
+
+	fmt.Println("FIVE: ", room)
+    if joinedRoom, status := roomsManager.Join(member4, roomId); status == mnc.SUCCESS {
+        fmt.Printf("Mika joined room %d.\n", joinedRoom)
+    }
+	fmt.Println("FIVE: ", room)
+
+	// full room => create a new room
+	fmt.Println("SIX: ", room)
+    if joinedRoom, status := roomsManager.Join(member5, roomId); status == mnc.SUCCESS {
+        fmt.Printf("Mika joined room %d.\n", joinedRoom)
+	}
+		fmt.Printf("\n\n--------- ALL rooms -------------------\n\n")
+		for _, r := range roomsManager.Rooms {
+			fmt.Println(r)
+		}
+		fmt.Print("\n-\n---------- ALL rooms ----------------\n\n\n")
+	fmt.Println("SIX: ", room)
+
+	// room 0 full, join room 1
+	fmt.Println("SEVEN: ", room)
+    if joinedRoom, status := roomsManager.Join(member6, roomId); status == mnc.SUCCESS {
+        fmt.Printf("Mika joined room %d.\n", joinedRoom)
+	}
+		fmt.Printf("\n\n--------- ALL rooms -------------------\n\n")
+		for _, r := range roomsManager.Rooms {
+			fmt.Println(r)
+		}
+		fmt.Print("\n-\n---------- ALL rooms ----------------\n\n\n")
+	fmt.Println("SEVEN: ", room)
+
+    // Attempting to join a new member to a non-existent room
+    invalidRoomId := 5
+    if _, status := roomsManager.Join(&mnc.Member{Name: "Charlie", Entity: newMockEntity()}, invalidRoomId); status == mnc.IDRANGE {
+        fmt.Printf("Charlie could not join room %d: invalid room ID.\n", invalidRoomId)
+    }
+}
+
+
+// Mock Entity implementation for demonstration purposes
+type mockEntity struct {
+	messages []string
+}
+
+func newMockEntity() *mockEntity {
+	return &mockEntity{messages: []string{}}
+}
+
+func (m *mockEntity) Write(p []byte) (n int, err error) {
+	message := string(p)
+	m.messages = append(m.messages, message)
+	return len(message), nil
+}
+
+func (m *mockEntity) Read(p []byte) (n int, err error) {
+	// Mock read - not implemented for this demo
+	return 0, nil
+}
