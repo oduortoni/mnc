@@ -5,8 +5,10 @@ import (
 	"html/template"
 	"net/http"
 	"os"
+	"fmt"
 
 	"mnc/mnc"
+	"mnc/sqlite"
 )
 
 func Server(address string, roomsManager *mnc.Rooms) {
@@ -18,10 +20,16 @@ func Server(address string, roomsManager *mnc.Rooms) {
 }
 
 func Explore(w http.ResponseWriter, r *http.Request) {
+	selectSQL := "SELECT id, name, capacity FROM rooms"
+	dbrooms, ok := sqlite.Run(sqlite.RoomSelect, selectSQL).([]*mnc.Room)
+	if ok {
+		fmt.Println("Rooms: ", dbrooms)
+	}
 	rooms := mnc.NewRooms(4, 5)
-	rooms.CreateRoom("bounty", 4)
-	rooms.CreateRoom("chocolate", 8)
-	rooms.CreateRoom("neon", 9)
+	rooms.Rooms = dbrooms
+	// rooms.CreateRoom("bounty", 4)
+	// rooms.CreateRoom("chocolate", 8)
+	// rooms.CreateRoom("neon", 9)
 
 	w.Header().Set("Content-Type", "application/json")
 

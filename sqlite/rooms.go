@@ -64,7 +64,7 @@ func RoomSelect(db *sql.DB, args ...any) any {
 	}
 	defer rows.Close()
 
-	rooms := []mnc.Room{}
+	rooms := []*mnc.Room{}
 	// iterate over the rows appending a room to rooms
 	for rows.Next() {
 		var id int
@@ -74,7 +74,7 @@ func RoomSelect(db *sql.DB, args ...any) any {
 			log.Fatal(err)
 		}
 		fmt.Printf("ID: %d, Name: %s, Capacity: %d\n", id, name, capacity)
-		room := mnc.Room{
+		room := &mnc.Room{
 			Id:       id,
 			Name:     name,
 			Capacity: capacity,
