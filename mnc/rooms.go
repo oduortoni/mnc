@@ -7,10 +7,10 @@ import (
 
 
 type Rooms struct {
-	CurrentNumber int
-	MaxNumRooms int
-    MaxRoomSize int
-	Rooms         []*Room
+	CurrentNumber int       `json:"currentnum"`
+	MaxNumRooms int         `json:"maxnumroms"`
+    MaxRoomSize int         `json:"maxroomsize"`
+	Rooms         []*Room   `json:"rooms"`
 }
 
 func NewRooms(maxnumrooms, maxroomsize int) *Rooms {

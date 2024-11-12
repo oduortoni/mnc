@@ -1,7 +1,7 @@
 package mnc
 
 type History struct {
-	Messages []string
+	Messages []string	`json:"messages"`
 }
 
 func (h *History) Save(message string) {

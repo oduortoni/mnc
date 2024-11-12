@@ -7,11 +7,11 @@ import (
 )
 
 type Room struct {
-	Id       int
-	Name     string
-	Capacity int
-	Members  map[string]*Member
-	History  *History
+	Id       int					`json:"id"`
+	Name     string					`json:"name"`
+	Capacity int					`json:"capacity"`
+	Members  map[string]*Member		`json:"members"`
+	History  *History				`json:"history"`
 }
 
 func NewRoom(id int, name string, capacity int) *Room {
