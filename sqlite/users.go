@@ -10,7 +10,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-func CreateRoomsTable(db *sql.DB, args ...any) any {
+func CreateUsersTable(db *sql.DB, args ...any) any {
 	query, ok := args[0].(string)
 	if ok {
 		_, err := db.Exec(query)
@@ -23,7 +23,7 @@ func CreateRoomsTable(db *sql.DB, args ...any) any {
 * create a room
 * args: query, name, capacity
  */
-func RoomCreate(db *sql.DB, args ...any) any {
+func UsersCreate(db *sql.DB, args ...any) any {
 	query, ok := args[0].(string)
 	if ok {
 		roomName, ok := args[1].(string)
@@ -41,7 +41,7 @@ func RoomCreate(db *sql.DB, args ...any) any {
 /*
 * select all rooms from the database
  */
-func RoomSelect(db *sql.DB, args ...any) any {
+func UsersSelect(db *sql.DB, args ...any) any {
 	query, ok := args[0].(string)
 	if !ok {
 		return nil
@@ -61,6 +61,7 @@ func RoomSelect(db *sql.DB, args ...any) any {
 		if err := rows.Scan(&id, &name, &capacity); err != nil {
 			log.Fatal(err)
 		}
+		fmt.Printf("ID: %d, Name: %s, Capacity: %d\n", id, name, capacity)
 		room := &mnc.Room{
 			Id:       id,
 			Name:     name,
@@ -75,14 +76,14 @@ func RoomSelect(db *sql.DB, args ...any) any {
 }
 
 /*
-* select a room from the database by id
+* select a user from the database by name
  */
- func RoomSelectById(db *sql.DB, args ...any) any {
+ func UsersSelectById(db *sql.DB, args ...any) any {
 	query, ok := args[0].(string)
 	if !ok {
 		return nil
 	}
-	roomId, ok := args[1].(int)
+	roomId, ok := args[1].(string)
 	if !ok {
 		return nil
 	}
@@ -118,7 +119,7 @@ func RoomSelect(db *sql.DB, args ...any) any {
 /*
 * updates the details of a room
  */
-func RoomUpdate(db *sql.DB, args ...any) any {
+func UsersUpdate(db *sql.DB, args ...any) any {
 	query, ok := args[0].(string)
 	if ok {
 		roomId, ok := args[1].(int)
@@ -136,7 +137,7 @@ func RoomUpdate(db *sql.DB, args ...any) any {
 /*
 * deletes an entire room
  */
-func RoomDelete(db *sql.DB, args ...any) any {
+func UsersDelete(db *sql.DB, args ...any) any {
 	query, ok := args[0].(string)
 	if ok {
 		roomName, ok := args[1].(string)

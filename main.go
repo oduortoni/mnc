@@ -15,7 +15,6 @@ func main() {
 	address := ":9000"
 	fmt.Printf("\n\n\tServer running on %s\n\n", address)
 	roomsManager := mnc.NewRooms(MAXNUMROOMS, MAXROOMSIZE)
-	// tcp.Server(address, roomsManager)
 	http.Server(address, roomsManager)
 }
 
@@ -25,6 +24,7 @@ func main() {
 // 	"fmt"
 
 // 	"mnc/sqlite"
+// 	"mnc/mnc"
 // )
 
 // func main() {
@@ -42,10 +42,16 @@ func main() {
 // 	// sqlite.Run(sqlite.RoomCreate, insertSQL, "mboggi", 7)
 
 // 	// selectSQL := "SELECT id, name, capacity FROM rooms"
-// 	// rooms, ok := sqlite.Run(sqlite.RoomSelect, selectSQL).([]mnc.Room)
+// 	// rooms, ok := sqlite.Run(sqlite.RoomSelect, selectSQL).([]*mnc.Room)
 // 	// if ok {
 // 	// 	fmt.Println("Rooms: ", rooms)
 // 	// }
+
+	// selectByIdSQL := "SELECT id, name, capacity FROM rooms WHERE id = ?"
+	// rooms, ok := sqlite.Run(sqlite.RoomSelectById, selectByIdSQL, 3).([]*mnc.Room)
+	// if ok {
+	// 	fmt.Println("Room: ", rooms[0].Name)
+	// }
 
 // 	// updateSQL := `UPDATE rooms SET capacity = ? WHERE name = ?`
 // 	// _, updated := sqlite.Run(sqlite.RoomUpdate, updateSQL, 3002, "mboggi").(bool)

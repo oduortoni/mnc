@@ -2,49 +2,64 @@ package http
 
 import (
 	"encoding/json"
+	"fmt"
 	"html/template"
 	"net/http"
 	"os"
-	"fmt"
+	"strconv"
 
 	"mnc/mnc"
+	"mnc/rooms"
 	"mnc/sqlite"
 )
 
 func Server(address string, roomsManager *mnc.Rooms) {
 	http.HandleFunc("/static/", Static)
-	http.HandleFunc("/explore", Explore)
+	http.HandleFunc("/explore", Explore(roomsManager))
+	http.HandleFunc("/createroom", CreateRoom(roomsManager))
 	http.HandleFunc("/error", Error)
 	http.HandleFunc("/", Index)
 	http.ListenAndServe(address, nil)
 }
 
-func Explore(w http.ResponseWriter, r *http.Request) {
-	selectSQL := "SELECT id, name, capacity FROM rooms"
-	dbrooms, ok := sqlite.Run(sqlite.RoomSelect, selectSQL).([]*mnc.Room)
-	if ok {
-		fmt.Println("Rooms: ", dbrooms)
-	}
-	rooms := mnc.NewRooms(4, 5)
-	rooms.Rooms = dbrooms
-	// rooms.CreateRoom("bounty", 4)
-	// rooms.CreateRoom("chocolate", 8)
-	// rooms.CreateRoom("neon", 9)
-
-	w.Header().Set("Content-Type", "application/json")
-
-	roomsJson, err := json.Marshal(rooms)
-	if err != nil {
-		errRooms := mnc.Rooms{
-			CurrentNumber: 0,
-			MaxNumRooms:   0,
-			MaxRoomSize:   0,
-			Rooms:         nil,
+func CreateRoom(roomsManager *mnc.Rooms) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		roomName := r.FormValue("name")
+		roomCapacityStr := r.FormValue("capacity")
+		roomCapacity, err := strconv.Atoi(roomCapacityStr)
+		if err != nil {
+			roomCapacity = 10
 		}
-		errJson, _ := json.Marshal(errRooms)
-		w.Write(errJson)
-	} else {
-		w.Write(roomsJson)
+		rooms.Create(roomName, roomCapacity)
+		roomsManager.CreateRoom(roomName, roomCapacity)
+
+		http.Redirect(w, r, "/", http.StatusFound)
+	}
+}
+
+func Explore(roomsManager *mnc.Rooms) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		selectSQL := "SELECT id, name, capacity FROM rooms"
+		dbrooms, ok := sqlite.Run(sqlite.RoomSelect, selectSQL).([]*mnc.Room)
+		if ok {
+			roomsManager.Rooms = dbrooms
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+
+		roomsJson, err := json.Marshal(roomsManager)
+		if err != nil {
+			errRooms := mnc.Rooms{
+				CurrentNumber: 0,
+				MaxNumRooms:   0,
+				MaxRoomSize:   0,
+				Rooms:         nil,
+			}
+			errJson, _ := json.Marshal(errRooms)
+			w.Write(errJson)
+		} else {
+			w.Write(roomsJson)
+		}
 	}
 }
 

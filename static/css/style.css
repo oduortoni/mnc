@@ -14,6 +14,138 @@ html, body {
     background: var(--clr-white);
     color: var(--clr-black);
 }
+/* General Navbar Styles */
+.navbar {
+    background-color: #333;
+    padding: 10px 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .navbar-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .navbar-brand a {
+    color: #fff;
+    font-size: 24px;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  .navbar-links {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+  }
+  
+  .navbar-links li a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 18px;
+    padding: 5px 10px;
+  }
+  
+  .navbar-links li a:hover {
+    background-color: #575757;
+    border-radius: 5px;
+  }
+  
+  .navbar-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+  }
+  
+  .navbar-toggle .bar {
+    width: 25px;
+    height: 3px;
+    background-color: #fff;
+    border-radius: 5px;
+  }
+  
+  /* Media Queries for Responsiveness */
+  @media (max-width: 768px) {
+    .navbar-container {
+      flex-direction: row;
+      align-items: flex-start;
+      padding-top: 1rem;
+    }
+  
+    .navbar-links {
+      margin-top: 2rem;
+      display: none;
+      flex-direction: column;
+      width: 100%;
+      gap: 0;
+    }
+  
+    .navbar-links li {
+      padding: 1rem;
+      width: 100%;
+    }
+  
+    .navbar-links li a {
+      padding: 10px 20px;
+      text-align: left;
+    }
+  
+    .navbar-toggle {
+      display: flex;
+    }
+  
+    .navbar-links.active {
+      display: flex;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .navbar-links li a {
+      font-size: 16px;
+    }
+  }
+  
+.container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
+  /* medium screen */
+  @media (max-width: 1200px) {
+    .container {
+      padding: 0 20px;
+    }
+  }
+  /* on smaller screens */
+  @media (max-width: 768px) {
+    .container {
+      padding: 0 10px;
+    }
+  }
+  
+ /* very small screens */
+  @media (max-width: 480px) {
+    .container {
+      padding: 0 5px;
+    }
+  }
+
+section {
+    height: 100vh;
+    padding-top: 10vh;
+}
+
 .anchor {
     display: inline-block;
     height: fit-content;

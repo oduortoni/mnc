@@ -8,23 +8,62 @@
     <script defer src="/static/js/script.js"></script>
     <link rel="stylesheet" href="/static/css/style.css" type="text/css" />
 </head>
-<body>
+<body class="container">
     <noscript>You need to enable JavaScript to run this application</noscript>
+    <nav class="navbar">
+        <div class="navbar-container">
+          <div class="navbar-brand">
+            <a href="#">MNC</a>
+          </div>
+          <ul class="navbar-links">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Services</a></li>
+            <li><a href="#create">Create Room</a></li>
+          </ul>
+          <div class="navbar-toggle">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+          </div>
+        </div>
+      </nav>
+      
+
     <header>
         <h1>MNC</h1>
     </header>
     <main>
-        <section id="error" style="display: hidden"></section>
         <section>
-            <h2>What to do</h2>
-            <p>
-                MNC is an acronym for Multiple Networking Chatrooms. In MNC, a user has the ability to begin chatrooms that are focussed on specific conversations. Rooms are created for a reason and as a result, a room should have a simple description. This is to enable any interested parties to peek through each room as they seek networking opportuinties online. It should be noted that the administrator has the right to set a ceiling on the number of participants and may choose to admit whoever they want.
-            </p>
-            <button id="explore" class="anchor">explore rooms</button>
+            <div>
+                <h2>What to do</h2>
+                <p>
+                    MNC is an acronym for Multiple Networking Chatrooms. In MNC, a user has the ability to begin chatrooms that are focussed on specific conversations. Rooms are created for a reason and as a result, a room should have a simple description. This is to enable any interested parties to peek through each room as they seek networking opportuinties online. It should be noted that the administrator has the right to set a ceiling on the number of participants and may choose to admit whoever they want.
+                </p>
+                <button id="explore" class="anchor">explore rooms</button>
+            </div>
+            <div id="exploration">
+                <!-- to hold the list of all rooms -->
+            </div>
         </section>
-        <section id="exploration">
-            <!-- to hold rooms data -->
+        <section id="create">
+            <form action="/createroom" method="POST">
+                <div class="form-control">
+                    <label for="name">Room Name</label><br/>
+                    <input type="text" name="name" id="name" />
+                </div>
+                <div class="form-control">
+                    <label for="capacity">Room Capacity</label><br/>
+                    <input type="text" name="capacity" id="capacity" />
+                </div>
+                <div class="form-control">
+                    <input type="submit" value="create room" />
+                </div>
+            </form>
         </section>
+
+        <!-- errors section -->
+        <section id="error" style="display: hidden"></section>
     </main>
     <footer>
         &copy;2024<small>mnc</small>
