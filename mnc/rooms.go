@@ -20,14 +20,14 @@ func NewRooms(maxnumrooms, maxroomsize int) *Rooms {
         MaxRoomSize: maxroomsize,
         Rooms:         []*Room{},
     }
-    main := NewRoom(0, "main", maxroomsize)
+    main := NewRoom(0, "main", maxroomsize, "Main room where everyone can idle")
     rooms.CurrentNumber++
     rooms.Rooms = append(rooms.Rooms, main)
     return rooms
 }
 
 
-func (rooms *Rooms) CreateRoom(name string, capacity int) (int, error) {
+func (rooms *Rooms) CreateRoom(name string, capacity int, description string) (int, error) {
     if rooms.CurrentNumber >= rooms.MaxNumRooms {
         return -1, fmt.Errorf("maximum number of rooms reached")
     }
@@ -44,7 +44,7 @@ func (rooms *Rooms) CreateRoom(name string, capacity int) (int, error) {
         }
     }
 
-    room := NewRoom(rooms.CurrentNumber, uniqueName, rooms.MaxRoomSize)
+    room := NewRoom(rooms.CurrentNumber, uniqueName, rooms.MaxRoomSize, description)
     rooms.Rooms = append(rooms.Rooms, room)
     rooms.CurrentNumber++ // next room's ID
 
@@ -77,7 +77,7 @@ func (rooms *Rooms) Join(member *Member, roomId int) (int, int) {
     }
 
     // no available rooms, create a new one
-    newRoomId, err := rooms.CreateRoom("", 5)
+    newRoomId, err := rooms.CreateRoom("", 5, "An extra room to hold an idle member")
     if err != nil {
         return -1, FULL // could not create a new room
     }
@@ -90,6 +90,15 @@ func (rooms *Rooms) Join(member *Member, roomId int) (int, int) {
     return -1, FULL // in case of failure to join the new room
 }
 
+
+func (r *Rooms)GetByName(name string) *Room {
+    for _, room := range r.Rooms {
+        if room.Name == name {
+            return room
+        }
+    }
+    return nil
+}
 
 func (r *Rooms)List() string {
     roomList := ""

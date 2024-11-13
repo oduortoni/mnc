@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiple Networking Chatrooms</title>
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+    <script defer src="/static/js/script.js"></script>
+    <link rel="stylesheet" href="/static/css/style.css" type="text/css" />
+</head>
+<body class="container">
+    <noscript>You need to enable JavaScript to run this application</noscript>
+    <nav class="navbar">
+        <div class="navbar-container">
+          <div class="navbar-brand">
+            <a href="#">MNC</a>
+          </div>
+          <ul class="navbar-links">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Services</a></li>
+            <li><a href="#create">Create Room</a></li>
+          </ul>
+          <div class="navbar-toggle">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+          </div>
+        </div>
+      </nav>
+      
+
+    <header>
+        <h1>MNC</h1>
+    </header>
+    <main>
+        <section>
+          <div class="room">
+            <h2>{{ .Name}}</h2>
+            <p>{{.Description}}</p>
+            <br />
+            <p style="color: gray">It holds a maximum of {{.Capacity}} members.</p>
+            
+            {{ if .Members }}
+            <ul>
+            {{range .Members}}
+                <li>{{.Name}} (ID: {{.Entity.ID}}, Role: {{.Entity.Type}})</li>
+            {{else}}
+                <li>No members found.</li>
+            {{end}}
+            </ul>
+            {{ end }}
+            {{if .History}}
+            <div class="chat-container" id="chat-container">
+            {{range .History.Messages}}
+              <div class="bubble">
+                  {{.Content}}
+                </div>
+              {{else}}
+              <li>No messages available.</li>
+              {{end}}
+            </div>
+            {{else}}
+                <p>No history available.</p>
+            {{end}}
+        </div>
+
+        <!-- message form -->
+        <div style="margin-top: 2rem;">
+          <form id="createmessageform" name="createmessageform">
+              <input type="text" name="roomname" id="roomname" value="{{.Name}}" hidden />
+              <div class="form-control">
+                  <textarea rows="10" cols="50" name="message" id="message" form="createmessageform" placeholder="Add a message..."></textarea>
+              </div>
+              <div class="form-control">
+                  <input type="submit" value="Post" class="anchor"/>
+              </div>
+          </form>
+        </div>
+        </section>
+
+    </main>
+    <footer>
+        &copy;2024<small>mnc</small>
+    </footer>
+
+    <script>
+      document.querySelector("#createmessageform").addEventListener("submit", function(e) {
+        e.preventDefault();
+        
+        // Get the message from the textarea
+        let messageInput = document.querySelector("#message");
+        let message = messageInput.value;
+        let roomnameInput = document.querySelector("#roomname");
+        let roomname = roomnameInput.value;
+
+        if (message.trim() === "") {
+            return; // Avoid sending an empty message
+        }
+        if (roomname.trim() === "") {
+            return; // Avoid saving empty room name
+        }
+
+        console.log("Message: ", message);
+        console.log("Roomname: ", roomname);
+
+        // Create a new message bubble
+        let messageHTML = document.createElement("div");
+        messageHTML.classList.add("bubble");
+        messageHTML.textContent = message;
+
+        // Append the new message to the chat container
+        document.querySelector("#chat-container").appendChild(messageHTML);
+
+        // Clear the textarea after sending the message
+        messageInput.value = '';
+
+        // Send the message via POST request
+        fetch("/messages/save", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                roomname: roomname,
+                message: message,
+            }),
+        })
+        .then(response => response.json())  // Assuming the response is in JSON format
+        .then(data => {
+            console.log("Message saved:", data);  // Handle the response if necessary
+        })
+        .catch(error => {
+            console.error("Error sending message:", error);  // Handle any errors
+        });
+    });
+    </script>
+</body>
+</html>

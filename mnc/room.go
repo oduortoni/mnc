@@ -7,20 +7,22 @@ import (
 )
 
 type Room struct {
-	Id       int					`json:"id"`
-	Name     string					`json:"name"`
-	Capacity int					`json:"capacity"`
-	Members  map[string]*Member		`json:"members"`
-	History  *History				`json:"history"`
+	Id          int                `json:"id"`
+	Name        string             `json:"name"`
+	Description string             `json:"description"`
+	Capacity    int                `json:"capacity"`
+	Members     map[string]*Member `json:"members"`
+	History     *History           `json:"history"`
 }
 
-func NewRoom(id int, name string, capacity int) *Room {
+func NewRoom(id int, name string, capacity int, description string) *Room {
 	return &Room{
-		Id:       id,
-		Name:     name,
-		Capacity: capacity,
-		Members:  make(map[string]*Member),
-		History:  &History{},
+		Id:          id,
+		Name:        name,
+		Capacity:    capacity,
+		Description: description,
+		Members:     make(map[string]*Member),
+		History:     &History{},
 	}
 }
 
@@ -51,11 +53,14 @@ func (r *Room) Leave(member *Member) bool {
 
 var mutex sync.Mutex
 
-func (r *Room) Broadcast(sender *Member, message string, save bool) {
-	formattedMsg := formatMessage(sender.Name, message)
-
+func (r *Room) Broadcast(sender *Member, payload string, save bool) {
+	formattedMsg := formatMessage(sender.Name, payload)
+	message := &Message{
+		RoomName: r.Name,
+		Content: formattedMsg,
+	}
 	if save {
-		r.History.Save(formattedMsg)
+		r.History.Save(message)
 	}
 
 	mutex.Lock()

@@ -47,7 +47,7 @@
             </div>
         </section>
         <section id="create">
-            <form action="/createroom" method="POST">
+            <form action="/createroom" method="POST" id="createroomform" name="createroomform">
                 <div class="form-control">
                     <label for="name">Room Name</label><br/>
                     <input type="text" name="name" id="name" />
@@ -57,7 +57,11 @@
                     <input type="text" name="capacity" id="capacity" />
                 </div>
                 <div class="form-control">
-                    <input type="submit" value="create room" />
+                    <label for="description">Room Description</label><br/>
+                    <textarea rows="10" cols="50" name="description" id="description" form="createroomform" placeholder="A room description highlights what it is about. You can add the rules that users have to adhere to."></textarea>
+                </div>
+                <div class="form-control">
+                    <input type="submit" value="create room" class="anchor"/>
                 </div>
             </form>
         </section>
@@ -68,5 +72,45 @@
     <footer>
         &copy;2024<small>mnc</small>
     </footer>
+
+    <script>
+        /*
+        * used to help the user explore the list of available rooms
+        */
+        document.querySelector("#explore").addEventListener("click", explore);
+
+        async function explore() {
+            try {
+                let rooms = await fetch("/explore")
+                    .then(result => result.json())
+                    .then(data => data);
+
+                console.log("Rooms:", rooms);
+
+                let roomstable = `<div>`;
+                rooms.rooms.forEach(room => {
+                    roomstable += `<div style="border: 1px solid rgba(30, 30, 30, 0.6); border-radius: 5px; margin: 1rem; padding: .5rem;">
+                            <h4>${room.name.toUpperCase()}</h4>
+                            <br />
+                            <div>
+                                <u>Capacity: ${room.capacity}</u>
+                            </div>
+                            <br />
+                            <div>${room.description}</div>
+                            <div>
+                                <a href="/explore/${room.id}" class="anchor">View</a>
+                            </div>
+                        </div>`;
+                });
+                roomstable += '</div>';
+
+                // Insert the roomsListHtml into the #exploration element
+                document.querySelector("#exploration").innerHTML = roomstable;
+            } catch (error) {
+                console.error("Error fetching rooms:", error);
+                document.querySelector("#exploration").innerHTML = "Failed to load rooms data.";
+            }
+        }
+    </script>
 </body>
 </html>

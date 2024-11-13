@@ -2,7 +2,6 @@ package sqlite
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 
 	"mnc/mnc"
@@ -30,8 +29,11 @@ func RoomCreate(db *sql.DB, args ...any) any {
 		if ok {
 			roomCapacity, ok := args[2].(int)
 			if ok {
-				_, err := db.Exec(query, roomName, roomCapacity)
-				return err == nil
+				roomDescription, ok := args[3].(string)
+				if ok {
+					_, err := db.Exec(query, roomName, roomCapacity, roomDescription)
+					return err == nil
+				}
 			}
 		}
 	}
@@ -58,13 +60,15 @@ func RoomSelect(db *sql.DB, args ...any) any {
 		var id int
 		var name string
 		var capacity int
-		if err := rows.Scan(&id, &name, &capacity); err != nil {
+		var description string
+		if err := rows.Scan(&id, &name, &capacity, &description); err != nil {
 			log.Fatal(err)
 		}
 		room := &mnc.Room{
-			Id:       id,
-			Name:     name,
-			Capacity: capacity,
+			Id:          id,
+			Name:        name,
+			Description: description,
+			Capacity:    capacity,
 		}
 		rooms = append(rooms, room)
 	}
@@ -77,7 +81,7 @@ func RoomSelect(db *sql.DB, args ...any) any {
 /*
 * select a room from the database by id
  */
- func RoomSelectById(db *sql.DB, args ...any) any {
+func RoomSelectById(db *sql.DB, args ...any) any {
 	query, ok := args[0].(string)
 	if !ok {
 		return nil
@@ -98,14 +102,15 @@ func RoomSelect(db *sql.DB, args ...any) any {
 		var id int
 		var name string
 		var capacity int
-		if err := rows.Scan(&id, &name, &capacity); err != nil {
+		var description string
+		if err := rows.Scan(&id, &name, &capacity, &description); err != nil {
 			log.Fatal(err)
 		}
-		fmt.Printf("ID: %d, Name: %s, Capacity: %d\n", id, name, capacity)
 		room := &mnc.Room{
-			Id:       id,
-			Name:     name,
-			Capacity: capacity,
+			Id:          id,
+			Name:        name,
+			Description: description,
+			Capacity:    capacity,
 		}
 		rooms = append(rooms, room)
 	}
@@ -125,8 +130,11 @@ func RoomUpdate(db *sql.DB, args ...any) any {
 		if ok {
 			roomName, ok := args[2].(string)
 			if ok {
-				_, err := db.Exec(query, roomId, roomName)
-				return err == nil
+				roomDescription, ok := args[3].(string)
+				if ok {
+					_, err := db.Exec(query, roomId, roomName, roomDescription)
+					return err == nil
+				}
 			}
 		}
 	}
